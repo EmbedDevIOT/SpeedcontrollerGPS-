@@ -25,10 +25,12 @@
 #define TIM_DIG_UPD 50
 #define TIM_SEC 1000
 
-char fw[4] = {"0.4"};
+char fw[4] = {"0.5"};
 
 uint32_t timer = 0;
 uint32_t timer2 = 0;
+uint32_t timer3 = 0;
+
 unsigned long start;
 
 boolean newData = false;
@@ -187,12 +189,26 @@ void loop()
     timer += 10;
   }
 
+  if (millis() - timer3 >= 500)
+  {
+    timer3 += 500;
+    GPS_Processing(GPS.time, GPS.date);
+  }
+
   if (millis() - timer2 >= 1000)
   {
+    char msg[33];
     count < 99 ? count++ : count = 0;
-    timer2 += 1000;
 
-    GPS_Processing(GPS.time, GPS.date);
+    timer2 += 1000;
+    Serial.print("Speed:");
+    Serial.print(GPSData.speed);
+    Serial.print("Sat:");
+    Serial.print(GPSData.satvalue);
+    Serial.print("Fix:");
+    Serial.println(GPSData.valid);
+    // sprintf(msg, "Speed: %f Sat: %d FIX: %d", GPSData.speed, GPSData.satvalue, GPSData.valid);
+    // Serial.println(msg);
   }
 
   // if (!client.connected())
